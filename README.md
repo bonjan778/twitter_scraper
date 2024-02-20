@@ -9,11 +9,12 @@ Récupère les informations de twitter d'un utilisateur, d'une expression ou d'u
 from ntscraper import Nitter
 
 scraper = Nitter(log_level=1, skip_instance_check=False)
+
 francetravail_tweets = scraper.get_tweets("FranceTravail", mode='user', number=10, instance=random_instance)
 
 display_and_save_tweets_info(francetravail_tweets, "/home/user/francetravail_tweets")
-```
 
+```
 Paramètres:
 - term: terme de la recherche
 - mode: term (default), user, hashtag
