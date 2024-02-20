@@ -3,6 +3,15 @@
 ## Note
 Récupère les informations de twitter d'un utilisateur, d'une expression ou d'un hashtag pour une analyse ultérieure
 
+## Instalation
+
+- Téléchargez python3 pour windows (Version stable le 16/02/2024: 3.11.8) selon votre architecture (généralement 64bit) à https://www.python.org/downloads/windows et suivez la procédure d'installation.
+
+- Téléchargez le projet (bouton vert "Code" -> download zip -> extraire le fichier sur le bureau).
+
+- Cliquez sur le point d'entrée du programme (ici: main.py).
+
+
 
 ## Usage
 
@@ -10,7 +19,7 @@ from ntscraper import Nitter
 
 scraper = Nitter(log_level=1, skip_instance_check=False)
 
-francetravail_tweets = scraper.get_tweets("FranceTravail", mode='user', number=10, instance=random_instance)
+francetravail_tweets = scraper.get_tweets("<u>FranceTravail</u>", mode='user', number=10, instance=random_instance)
 
 display_and_save_tweets_info(francetravail_tweets, "/home/user/francetravail_tweets")
 
