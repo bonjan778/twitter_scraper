@@ -3,7 +3,7 @@
 ## Note
 Récupère les informations de twitter d'un utilisateur, d'une expression ou d'un hashtag pour une analyse ultérieure
 
-## Instalation
+## Installation
 
 - Téléchargez python3 pour windows (Version stable le 16/02/2024: 3.11.8) selon votre architecture (généralement 64bit) à https://www.python.org/downloads/windows et suivez la procédure d'installation.
 
