@@ -1,130 +1,119 @@
-# Unofficial Nitter scraper
+# Scraper pour twitter
 
 ## Note
+Récupère les informations de twitter d'un utilisateur, d'une expression ou d'un hashtag pour une analyse ultérieure
 
-Twitter has recently made some changes which affected every third party Twitter client, including Nitter. As a result, most Nitter instances have shut down or will shut down shortly. Even local instances are affected by this, so you may not be able to scrape as many tweets as expected, if at all.
 
-## The scraper
+## Usage
 
-This is a simple library to scrape Nitter instances for tweets. It can:
-
-- search and scrape tweets with a certain term
-
-- search and scrape tweets with a certain hashtag
-
-- scrape tweets from a user profile
-
-- get profile information of a user, such as display name, username, number of tweets, profile picture ...
-
-If the instance to use is not provided to the scraper, it will use a random public instance. If you can, please host your own instance in order to avoid overloading the public ones and letting Nitter stay alive for everyone. You can read more about that here: https://github.com/zedeus/nitter#installation.
-
----
-
-## Installation
-
-```
-pip install ntscraper
-```
-
-## How to use
-
-First, initialize the library:
-
-```python
 from ntscraper import Nitter
 
 scraper = Nitter(log_level=1, skip_instance_check=False)
-```
-The valid logging levels are:
-- None = no logs
-- 0 = only warning and error logs
-- 1 = previous + informational logs (default)
+francetravail_tweets = scraper.get_tweets("FranceTravail", mode='user', number=10, instance=random_instance)
 
-The `skip_instance_check` parameter is used to skip the check of the Nitter instances altogether during the execution of the script. If you use your own instance or trust the instance you are relying on, then you can skip set it to 'True', otherwise it's better to leave it to false.
-
-Then, choose the proper function for what you want to do from the following.
-
-### Scrape tweets
-
-```python
-github_hash_tweets = scraper.get_tweets("github", mode='hashtag')
-
-bezos_tweets = scraper.get_tweets("JeffBezos", mode='user')
+display_and_save_tweets_info(francetravail_tweets, "/home/user/francetravail_tweets")
 ```
 
-Parameters:
-- term: search term
-- mode: modality to scrape the tweets. Default is 'term' which will look for tweets containing the search term. Other modes are 'hashtag' to search for a hashtag and 'user' to scrape tweets from a user profile
-- number: number of tweets to scrape. Default is -1 (no limit).
-- since: date to start scraping from, formatted as YYYY-MM-DD. Default is None
-- until: date to stop scraping at, formatted as YYYY-MM-DD. Default is None
-- near: location to search tweets from. Default is None (anywhere)
-- language: language of the tweets to search. Default is None (any language). The language must be specified as a 2-letter ISO 639-1 code (e.g. 'en' for English, 'es' for Spanish, 'fr' for French ...)
-- to: user to which the tweets are directed. Default is None (any user). For example, if you want to search for tweets directed to @github, you would set this parameter to 'github'
-- filters: list of filters to apply to the search. Default is None. Valid filters are: 'nativeretweets', 'media', 'videos', 'news', 'verified', 'native_video', 'replies', 'links', 'images', 'safe', 'quote', 'pro_video'
-- exclude: list of filters to exclude from the search. Default is None. Valid filters are the same as above
-- max_retries: max retries to scrape a page. Default is 5
-- instance: Nitter instance to use. Default is None and will be chosen at random
-
-Returns a dictionary with tweets and threads for the term.
-
-#### Multiprocessing
-
-You can also scrape multiple terms at once using multiprocessing:
-
-```python
-terms = ["github", "bezos", "musk"]
-
-results = scraper.get_tweets(terms, mode='term')
+Paramètres:
+- term: terme de la recherche
+- mode: term (default), user, hashtag
+- number: nombre de tweets à scraper (default -1 unlimited).
 ```
 
-Each term will be scraped in a different process. The result will be a list of dictionaries, one for each term.
 
-The multiprocessing code needs to run in a `if __name__ == "__main__"` block to avoid errors. With multiprocessing, only full logging is supported. Also, the number of processes is limited to the number of available cores on your machine.
-
-NOTE: using multiprocessing on public instances is highly discouraged since it puts too much load on the servers and could potentially also get you rate limited. Please only use it on your local instance.
-
-### Get profile information
-
-```python
-bezos_information = scraper.get_profile_info("JeffBezos")
+## Example avec le compte officiel de FranceTravail
 ```
+User: France Travail (ex-Pôle emploi) (@FranceTravail)
+Date: Feb 19, 2024 · 7:50 AM UTC
+Text: Lancement des Journées des métiers de l’#agriculture et du vivant ! 🌱  🗓️ 19 au 23 février 2024  + de 500 événements organisés avec l’@oselagri_anefa sur l’ensemble du #territoire ➡️ https://www.francetravail.org/accueil/communiques/2024/france-travail-et-lanefa-se-mobilisent-pour-lemploi-dans-lagriculture.html?type=article #LagriRecrute #AvecFranceTravail
 
-Parameters:
-- username: username of the page to scrape
-- max_retries: max retries to scrape a page. Default is 5
-- instance: Nitter instance to use. Default is None
+Pictures:
+ - https://pbs.twimg.com/media/GGry61WXoAAf_9h.jpg
+Stats: Comments: 0, Retweets: 18, Quotes: 1, Likes: 19
 
-Returns a dictionary of the profile's information.
+--------------------------------------------------
+User: France Travail Normandie (ex-Pôle emploi) (@FTravail_NDIE)
+Date: Feb 20, 2024 · 10:31 AM UTC
+Text: Aujourd'hui, @ThibautGuilluy directeur général @FranceTravail est en visite à la Mission locale du Havre !  Au programme :  Découverte d’actions locales innovantes, réflexion sur l'anticipation des besoins en compétences, et renforcement de la coopération pour l’#emploi.
 
-#### Multiprocessing
+Pictures:
+ - https://pbs.twimg.com/media/GGxeJGlXEAAuFV1.jpg
+ - https://pbs.twimg.com/media/GGxeJHlWEAAtmT7.jpg
+ - https://pbs.twimg.com/media/GGxeJHOW4AA9Gk9.jpg
+This is a retweet.
+Stats: Comments: 0, Retweets: 4, Quotes: 0, Likes: 7
 
-As for the term scraping, you can also get info from multiple profiles at once using multiprocessing:
+--------------------------------------------------
+User: Apec_Etudes 🔎 (@Apec_Etudes)
+Date: Feb 20, 2024 · 8:18 AM UTC
+Text: Retrouvez notre publication sur les métiers #cadres porteurs en 2024 : https://corporate.apec.fr/home/nos-etudes/toutes-nos-etudes/les-metiers-cadres-porteurs-en-2024.html 🧵
 
-```python
-usernames = ["x", "github"]
+Pictures:
+ - https://pbs.twimg.com/media/GGxCfisWYAEPvJ9.jpg
+This is a retweet.
+Stats: Comments: 1, Retweets: 3, Quotes: 0, Likes: 1
 
-results = scraper.get_profile_info(usernames)
+--------------------------------------------------
+User: France Travail (ex-Pôle emploi) (@FranceTravail)
+Date: Feb 20, 2024 · 8:39 AM UTC
+Text: L'#agriculture maintient une dynamique d’embauche importante sur l'ensemble du #territoire ! 🚀  + de 245 000 projets de #recrutement chaque année, selon notre enquête #BMO sur les besoins en main-d’œuvre des entreprises 🔎  cc @oselagri_anefa #LagriRecrute #AvecFranceTravail
+
+Stats: Comments: 1, Retweets: 6, Quotes: 0, Likes: 7
+
+--------------------------------------------------
+User: France Travail (ex-Pôle emploi) (@FranceTravail)
+Date: Feb 19, 2024 · 2:04 PM UTC
+Text: Plusieurs leviers existent pour répondre aux besoins de #recrutement de la filière agricole. Parmi eux : la promotion des métiers auprès de toutes et tous 📣  De nombreux acteurs se mobilisent pour l'#emploi des ♀️ dans l'#agriculture ➡️ https://francetravail.org/accueil/actualites/2024/lagriculture-un-secteur-entre-defis-et-mutations.html?type=article #AvecFranceTravail
+
+Pictures:
+ - https://pbs.twimg.com/media/GGtIKzBXAAADcfb.jpg
+Stats: Comments: 0, Retweets: 10, Quotes: 0, Likes: 15
+
+--------------------------------------------------
+User: France Travail (ex-Pôle emploi) (@FranceTravail)
+Date: Feb 19, 2024 · 12:31 PM UTC
+Text: En France, + de 25 000 personnes en situation de #handicap travaillent dans l’#agriculture 🌱  💡 C’est un secteur dynamique qui ouvre ses portes aux travailleurs handicapés, comme le présente @ID_LinfoDurable ➡️ https://www.linfodurable.fr/handicap-travailler-en-agriculture-avec-ses-differences-43783 #LagriRecrute #AvecFranceTravail #inclusion
+
+Pictures:
+ - https://pbs.twimg.com/media/GGszPnlWUAAYFlZ.jpg
+Stats: Comments: 1, Retweets: 5, Quotes: 0, Likes: 12
+
+--------------------------------------------------
+User: France Travail (ex-Pôle emploi) (@FranceTravail)
+Date: Feb 16, 2024 · 12:24 PM UTC
+Text: Comment France Travail accompagne les entreprises ? 🤝  🎙️ Avec la préparation opérationnelle à l'emploi individuelle, France Travail propose une aide au financement de #formation avant l'embauche pour faciliter les #recrutements de l'entreprise Otis ➡️ https://francetravail.org/accueil/actualites/2024/nos-techniciens-sont-nos-premiers-ambassadeurs-aupres-de-nos-clients.html?type=article
+
+Pictures:
+ - https://pbs.twimg.com/media/GGdS5W_XMAAK8wQ.jpg
+Stats: Comments: 2, Retweets: 11, Quotes: 2, Likes: 21
+
+--------------------------------------------------
+User: France Travail Nouvelle-Aquitaine (ex-Pôle emploi) (@FTravail_NA)
+Date: Feb 16, 2024 · 8:40 AM UTC
+Text: .@ThibautGuilluy est en visite à l'agence de #Bergerac. A la rencontre des conseillers, mais aussi des entreprises. La semaine dernière, l'opération "Je Teste un Métier" en #Dordogne et en #Corrèze a permis de lancer 550 #immersions, dont 30% pour les jeunes. #AvecFranceTravail
+
+Pictures:
+ - https://pbs.twimg.com/media/GGchBfCXwAAvyXy.jpg
+This is a retweet.
+Stats: Comments: 2, Retweets: 5, Quotes: 0, Likes: 20
+
+--------------------------------------------------
+User: Thibaut Guilluy (@ThibautGuilluy)
+Date: Feb 15, 2024 · 1:53 PM UTC
+Text: 🥇🥈🥉 Je suis supporter des #JOP de @Paris2024 et je suis fier de vous présenter les 18 athlètes de haut niveau soutenus par @FranceTravail ! Merci de porter haut les valeurs qui nous sont communes. Dernière ligne droite 💥 Nous sommes tous derrière vous ! #AvecFranceTravail
+
+This is a retweet.
+Stats: Comments: 4, Retweets: 42, Quotes: 2, Likes: 95
+
+--------------------------------------------------
+User: Fonds social européen + (@FSE_nat)
+Date: Feb 15, 2024 · 2:33 PM UTC
+Text: 🤓 Envie d'en apprendre davantage sur les programmes nationaux #FSE+ et #FTJ 🇪🇺 ? Découvrez notre synthèse en 4 pages sur notre site ➡️ https://fse.gouv.fr/sites/default/files/2024-02/Les%20Programmes%20nationaux%20FSE%2B%20%2522Emploi%2C%20Inclusion%2C%20Jeunesse%20et%20Comp%C3%A9tences%2522%20et%20FTJ%20%2522Emploi%20-%20Comp%C3%A9tences%2522%202021-2027.pdf #Emploi #Inclusion #Jeunesse #Compétences #Transition
+
+Pictures:
+ - https://pbs.twimg.com/media/GGYoaeFaAAAijoc.jpg
+This is a retweet.
+Stats: Comments: 0, Retweets: 7, Quotes: 0, Likes: 6
+
+--------------------------------------------------
 ```
-
-Each user will be scraped in a different process. The result will be a list of dictionaries, one for each user.
-
-The multiprocessing code needs to run in a `if __name__ == "__main__"` block to avoid errors. With multiprocessing, only full logging is supported. Also, the number of processes is limited to the number of available cores on your machine.
-
-NOTE: using multiprocessing on public instances is highly discouraged since it puts too much load on the servers and could potentially also get you rate limited. Please only use it on your local instance.
-
-### Get random Nitter instance
-
-```python
-random_instance = scraper.get_random_instance()
-```
-
-Returns a random Nitter instance.
-
-## Note
-
-Due to recent changes on Twitter's side, some Nitter instances may not work properly even if they are marked as "working" on Nitter's wiki. If you have trouble scraping with a certain instance, try changing it and check if the problem persists.
-
-## To do list
-
-- [ ] Add scraping of individual posts with comments
